@@ -1,0 +1,89 @@
+---
+title: "Ranking US States by 'Scenicness'"
+author: "Philipp Hunziker"
+date: "July 23, 2018"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Almost half of all submissions to Reddit's [r/earthporn](http://www.reddit.com/r/earthporn) subreddit are photographs of scenic places in the United States. However, as we've seen, these are far from uniformly distributed across the country. In the following, we rank US states by scenicness by counting the number of  r/earthporn submissions by state. We can do so thanks to the geoparser we developed to geotag r/earthporn submissions.
+
+## Data
+
+We start by loading the r/earthporn submission meta data, and the borders of US states as a shapefile (obtained from [here](https://www.census.gov/geo/maps-data/data/cbf/cbf_state.html)). We also fetch state-level population data (from 2015) from the usmap R package.
+
+```{r load}
+library(rgdal)
+library(usmap)
+library(sp)
+
+## Load the data
+setwd("~/Projects/incubator/impress")
+meta.df <- read.csv('data/meta.csv')
+states.spdf <- readOGR("geodata/usstates", "cb_2017_us_state_500k")
+pop.df <- as.data.frame(statepop)
+```
+
+## Geocode the submissions
+
+Now we geocode the submission data by creating a SpatialPoints object from the lon/lat information we gathered during geo-parsing.
+
+```{r geotag}
+library(sp)
+im.sp <- SpatialPoints(meta.df[,c('lon', 'lat')])
+```
+
+## Prepare state data
+
+Next we subset the states in the contiguous united states and join the population data. 
+
+```{r pc}
+library(rgeos)
+
+## Contiguous United States
+states.spdf <- states.spdf[!(states.spdf$NAME %in% c("Alaska", "Hawaii", 
+                                                     "United States Virgin Islands", 
+                                                     "Commonwealth of the Northern Mariana Islands", 
+                                                     "American Samoa", 
+                                                     "Puerto Rico", "Guam")),]
+states.spdf@data <- states.spdf@data[,c("NAME", "STUSPS", "ALAND")]
+names(states.spdf) <- c("name", "abbr", "area")
+states.spdf$area <- as.numeric(as.character(states.spdf$area))
+
+## Join pop
+pop.df <- as.data.frame(statepop)
+states.spdf@data <- merge(states.spdf@data, pop.df, by = "abbr", all.x = TRUE, all.y = FALSE, sort = FALSE)
+```
+
+## Count and normalize images
+
+We then count the number of images per state. Importantly, we also normalize the image counts per capita (100k residents) and per area (1m square km), to avoid falling into the [population density map trap](https://xkcd.com/1138/).
+
+```{r count}
+## Image count per capita and per area
+intrs.mat <- gIntersects(states.spdf, im.sp, byid = TRUE)
+count <- apply(intrs.mat, 2, sum)
+states.spdf$imcount <- count
+states.spdf$im_pc <- states.spdf$imcount / (states.spdf$pop_2015/100000)
+states.spdf$im_pa <- states.spdf$imcount / (states.spdf$area/1000000)
+```
+
+## Plot
+
+Now let's plot the maps:
+
+
+```{r plot,  fig.align="center"}
+library(sp)
+
+## Plot both
+gridExtra::grid.arrange(spplot(states.spdf, zcol = "im_pc", main = "Images per 100k residents"), 
+                        spplot(states.spdf, zcol = "im_pa", main = "Images per 1m square km"))
+
+```
+
+In per capita terms, *Wyoming* is the most scenic state! However, tiny *Rhode Island* appears to have the most scenic spots per square kilometer. 
+
