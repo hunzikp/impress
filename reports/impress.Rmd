@@ -11,9 +11,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 **impress** is a dataset of 2611 geotagged scenic images collected from the [r/earthporn](http://www.reddit.com/r/earthporn) subreddit, a form where users submit original photographs of scenic landscapes. Each datum consists of a high-resolution image (typically > 1024x1024) together with submission-related data and an estimated geotag. 
 
+You can find the metadata and some example images [here](https://github.com/hunzikp/impress/tree/master/data). (The image files are too large to upload to github in total.)
+
 ## Data aquisition
 
-The submission data, including url-links to the submitted images, are collected using an R-based command-line tool that uses the [Python Reddit API Wrapper](https://praw.readthedocs.io/en/latest/), accessed via [reticulate](https://github.com/rstudio/reticulate). The command-line tool listens to the Reddit API via a streaming iterator, and downloads submission information as soon as it is available on Reddit. The submission information (submission title, date, upvotes, etc) is then pushed into a [PostgreSQL database](https://www.postgresql.org/). The latter is to prevent loss-of-data in case of an error, and allows pulling data from Reddit with multiple machines in parallel. Given the submission data, we then download the submission image.
+The submission data, including url-links to the submitted images, are collected using an [R-based command-line tool](https://raw.githubusercontent.com/hunzikp/impress/master/R/process_submissions.R) that uses the [Python Reddit API Wrapper](https://praw.readthedocs.io/en/latest/), accessed via [reticulate](https://github.com/rstudio/reticulate). The command-line tool listens to the Reddit API via a streaming iterator, and downloads submission information as soon as it is available on Reddit. The submission information (submission title, date, upvotes, etc) is then pushed into a [PostgreSQL database](https://www.postgresql.org/). The latter is to prevent loss-of-data in case of an error, and allows pulling data from Reddit with multiple machines in parallel. Given the submission data, we then download the submission image.
 
 ## Geparsing
 
