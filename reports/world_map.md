@@ -1,4 +1,4 @@
-Scenic Images Around the Globe
+Scenic images around the globe
 ================
 Philipp Hunziker
 July 23, 2018

@@ -38,7 +38,7 @@ head(meta.df[,c("title", "created_date", "lat", "lon")])
 
 And here's an example submission:
 
-```{r im, echo = FALSE}
+```{r im, echo = FALSE, warning=FALSE,message=FALSE}
 library(imager)
 
 ## Load an image

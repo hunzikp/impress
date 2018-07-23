@@ -1,4 +1,4 @@
-Ranking US States by 'Scenicness'
+Ranking US states by 'scenicness'
 ================
 Philipp Hunziker
 July 23, 2018

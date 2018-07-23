@@ -50,31 +50,4 @@ head(meta.df[,c("title", "created_date", "lat", "lon")])
 
 And here's an example submission:
 
-    ## Loading required package: plyr
-
-    ## Loading required package: magrittr
-
-    ## 
-    ## Attaching package: 'imager'
-
-    ## The following object is masked from 'package:magrittr':
-    ## 
-    ##     add
-
-    ## The following object is masked from 'package:plyr':
-    ## 
-    ##     liply
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     convolve, spectrum
-
-    ## The following object is masked from 'package:graphics':
-    ## 
-    ##     frame
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     save.image
-
 ![](impress_files/figure-markdown_github/im-1.png)

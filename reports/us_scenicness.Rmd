@@ -1,5 +1,5 @@
 ---
-title: "Ranking US States by 'Scenicness'"
+title: "Ranking US states by 'scenicness'"
 author: "Philipp Hunziker"
 date: "July 23, 2018"
 output: github_document
